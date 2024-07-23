@@ -1,0 +1,93 @@
+
+# Guia de Uso do Código de Comunicação ESP32 com LoRa e MQTT
+
+## Introdução
+Este guia explica como configurar e usar o código fornecido para permitir a comunicação entre ESP32 usando LoRa e MQTT. Este código é projetado para ser genérico e facilmente adaptável a diferentes configurações de projeto.
+
+## Configurações Necessárias
+
+### 1. Rede Wi-Fi
+Você precisa definir o SSID e a senha da sua rede Wi-Fi para que o ESP32 possa se conectar à Internet.
+
+```cpp
+const char* ssid = "SEU_SSID";     // Insira o nome da sua rede Wi-Fi
+const char* password = "SUA_SENHA"; // Insira a senha da sua rede Wi-Fi
+```
+
+### 2. Servidor MQTT
+Configure os detalhes do servidor MQTT ao qual o ESP32 se conectará. Isso inclui o endereço do servidor, a porta, o nome de usuário e a senha.
+
+```cpp
+const char* mqttServer = "SEU_SERVIDOR_MQTT";
+const int mqttPort = 8883; // Porta segura MQTT (TLS)
+const char* mqttUsername = "SEU_USUARIO_MQTT";
+const char* mqttPassword = "SUA_SENHA_MQTT";
+```
+
+### 3. Certificado Raiz
+Insira o certificado raiz do servidor MQTT para permitir uma conexão segura. O certificado raiz deve ser inserido na variável `root_ca`.
+
+```cpp
+const char root_ca[] PROGMEM = R"EOF(
+-----BEGIN CERTIFICATE-----
+... (seu certificado raiz aqui) ...
+-----END CERTIFICATE-----
+)EOF";
+```
+
+### 4. Parâmetros de Comunicação LoRa
+Defina os parâmetros de comunicação LoRa, como frequência, largura de banda, fator de espalhamento, taxa de codificação, etc.
+
+```cpp
+#define RF_FREQUENCY 927000000
+#define LORA_BANDWIDTH 0
+#define LORA_SPREADING_FACTOR 11
+#define LORA_CODINGRATE 1
+#define LORA_PREAMBLE_LENGTH 8
+#define LORA_SYMBOL_TIMEOUT 0
+#define LORA_FIX_LENGTH_PAYLOAD_ON false
+#define LORA_IQ_INVERSION_ON false
+#define RX_TIMEOUT_VALUE 1000
+#define BUFFER_SIZE 256
+```
+
+## Funções Principais
+
+### 1. `setup()`
+Esta função é chamada uma vez no início do programa. Ela configura o display OLED, inicializa a comunicação LoRa, conecta ao Wi-Fi e ao servidor MQTT.
+
+### 2. `loop()`
+Esta função é chamada repetidamente durante a execução do programa. Ela mantém a conexão LoRa, Wi-Fi e MQTT ativas, e processa as interrupções da comunicação LoRa.
+
+### 3. `OnRxDone()`
+Esta função é chamada quando um pacote é recebido via LoRa. Ela exibe os dados recebidos no display OLED e publica a mensagem no tópico MQTT.
+
+### 4. `connectWiFi()`
+Esta função conecta o ESP32 à rede Wi-Fi.
+
+### 5. `reconnect()`
+Esta função tenta reconectar ao servidor MQTT caso a conexão seja perdida.
+
+### 6. `callback()`
+Esta função é chamada quando uma mensagem é recebida do servidor MQTT.
+
+## Uso do Código
+
+1. **Configuração Inicial**: 
+   - Abra o código em um ambiente de desenvolvimento Arduino.
+   - Substitua as constantes `ssid`, `password`, `mqttServer`, `mqttPort`, `mqttUsername`, `mqttPassword` e `root_ca` com suas próprias informações de rede Wi-Fi e servidor MQTT.
+   
+2. **Upload para ESP32**:
+   - Conecte o ESP32 ao seu computador.
+   - Selecione a placa correta (ESP32) e a porta COM no Arduino IDE.
+   - Faça o upload do código para o ESP32.
+
+3. **Monitoramento**:
+   - Use o Monitor Serial no Arduino IDE para visualizar logs de depuração.
+   - Verifique se o ESP32 se conecta ao Wi-Fi e ao servidor MQTT corretamente.
+   - Certifique-se de que os dados recebidos via LoRa são exibidos no display OLED e publicados no tópico MQTT configurado.
+
+## Personalização
+Você pode personalizar o código conforme suas necessidades, alterando os parâmetros de comunicação LoRa, ajustando a exibição no display OLED ou modificando a lógica de processamento de mensagens MQTT.
+
+Esperamos que este guia ajude a configurar e usar o código de forma eficiente para seus projetos.
